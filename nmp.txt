@@ -1,0 +1,63 @@
+import { GoogleGenAI } from "@google/genai";
+
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
+
+export async function POST(request) {
+  try {
+    const profile = await request.json();
+
+    if (!profile.goal || !profile.experience || !profile.days) {
+      return Response.json(
+        { error: "Please provide all required fitness information." },
+        { status: 400 }
+      );
+    }
+
+    const prompt = `
+You are FitBuddy-AI, an AI fitness planning assistant.
+
+Create a personalized workout plan using this profile:
+
+Goal: ${profile.goal}
+Fitness Level: ${profile.experience}
+Days per Week: ${profile.days}
+Workout Duration: ${profile.duration} minutes
+Equipment: ${profile.equipment}
+
+Requirements:
+- Create a practical weekly workout plan.
+- Respect the available equipment.
+- Match the user's experience level.
+- Keep workouts within the requested duration.
+- Include exercises, sets, reps and rest periods.
+- Include warm-up and cooldown.
+- Include progression guidance.
+- Return ONLY valid JSON.
+- Do not diagnose medical conditions.
+- Include a safety note advising users to stop if an exercise causes pain.
+`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+      },
+    });
+
+    const plan = JSON.parse(response.text);
+
+    return Response.json(plan);
+  } catch (error) {
+    console.error(error);
+
+    return Response.json(
+      {
+        error: "Unable to generate the fitness plan. Please try again.",
+      },
+      { status: 500 }
+    );
+  }
+}
