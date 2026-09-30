@@ -1,0 +1,422 @@
+1. Objectives of Testing
+The main objectives are to:
+
+Verify every feature works as specified.
+
+Ensure Gemini generates valid structured workout plans.
+
+Check that user inputs are correctly processed.
+
+Verify database operations.
+
+Test frontend and backend integration.
+
+Identify and fix bugs.
+
+Test application security.
+
+Check responsiveness and usability.
+
+Ensure inappropriate or invalid AI output is handled safely.
+
+2. Testing Strategy
+                 TESTING
+                    │
+        ┌───────────┼───────────┐
+        ↓           ↓           ↓
+   Unit Testing  Integration  System
+                    Testing    Testing
+        │           │           │
+        └───────────┼───────────┘
+                    ↓
+              User Acceptance
+                    Testing
+
+3. Unit Testing
+Individual components are tested independently.
+
+Components to test
+Login validation
+
+Registration validation
+
+Fitness profile validation
+
+Workout calculations
+
+API functions
+
+Database functions
+
+Progress calculations
+
+Gemini response validation
+
+Example
+Input:
+Days per week = 4
+
+Expected:
+System accepts value
+
+Input:
+Days per week = -2
+
+Expected:
+Validation error
+
+4. Integration Testing
+Integration testing verifies that different components work together.
+
+Gemini integration
+User Profile
+     ↓
+Backend
+     ↓
+Gemini API
+     ↓
+JSON Response
+     ↓
+Validator
+     ↓
+Database
+     ↓
+Frontend
+
+Test cases should verify:
+
+Correct information is sent to Gemini.
+
+Gemini returns the expected structure.
+
+Invalid responses are rejected.
+
+Valid plans are stored correctly.
+
+Generated plans appear correctly in the frontend.
+
+5. Functional Testing
+Test Case	Expected Result
+Register with valid details	Account created
+Register with invalid email	Validation error
+Login with correct credentials	User logged in
+Login with incorrect password	Error displayed
+Submit fitness profile	Profile saved
+Generate workout	Gemini plan generated
+View workout	Exercises displayed
+Complete exercise	Completion recorded
+Complete workout	History updated
+Replace exercise	Alternative generated
+View progress	Correct statistics displayed
+Logout	User session ends
+
+6. Gemini AI Testing
+Since Gemini is the central component, it requires dedicated testing.
+
+Test different user profiles
+Profile A
+Beginner + Home + No Equipment
+          ↓
+Bodyweight exercises
+
+Profile B
+Intermediate + Gym
+          ↓
+Gym-based exercises
+
+Profile C
+Beginner + Dumbbells
+          ↓
+Dumbbell-based exercises
+
+Verify that the generated plan respects:
+
+Fitness goal
+
+Experience level
+
+Available equipment
+
+Number of training days
+
+Requested session duration
+
+User preferences
+
+Structured output testing
+The application should verify that Gemini returns the required fields:
+
+planName ✓
+durationWeeks ✓
+workouts ✓
+exercises ✓
+sets ✓
+reps ✓
+restSeconds ✓
+
+If required fields are missing, the application should reject or safely handle the response rather than displaying incomplete data.
+
+7. Safety Testing
+Fitness-related AI output should receive additional testing.
+
+Test whether the system:
+
+Avoids diagnosing medical conditions.
+
+Does not claim to replace professional medical advice.
+
+Handles injury/medical-condition information appropriately.
+
+Includes reasonable safety guidance.
+
+Avoids generating obviously unsuitable instructions.
+
+Allows users to stop or replace an unsuitable exercise.
+
+For example:
+
+User reports an injury
+          ↓
+Gemini
+          ↓
+System avoids attempting medical diagnosis
+          ↓
+Provides appropriate safety guidance
+          ↓
+Encourages professional advice where appropriate
+
+8. Database Testing
+Verify:
+
+User records are stored correctly.
+
+Fitness profiles are associated with the correct users.
+
+Workout plans are saved correctly.
+
+Exercises belong to the correct workouts.
+
+Completed workouts are recorded.
+
+Users cannot access another user's private data.
+
+Example:
+
+User A
+ ↓
+Plan A
+ ↓
+Workout A
+
+User B
+ ↓
+Plan B
+ ↓
+Workout B
+
+User A should never be able to retrieve User B's private workout information.
+
+9. UI/UX Testing
+Check the application on:
+
+Desktop
+
+Tablet
+
+Mobile
+
+Test:
+
+Navigation
+
+Buttons
+
+Forms
+
+Error messages
+
+Workout cards
+
+Progress charts
+
+Loading states
+
+Empty states
+
+Responsive layouts
+
+For example, when Gemini is generating a plan:
+
+Generating your personalized plan...
+
+        ⟳ Loading
+
+The user should receive clear feedback instead of seeing a blank screen.
+
+10. Performance Testing
+Measure:
+
+Page loading time
+
+API response time
+
+Gemini generation time
+
+Database response time
+
+Application behavior with multiple requests
+
+Also test what happens when Gemini takes longer than expected or temporarily becomes unavailable.
+
+11. Security Testing
+Test:
+
+Authentication
+
+Authorization
+
+Session handling
+
+API endpoints
+
+Input validation
+
+Database permissions
+
+API-key protection
+
+The Gemini API key must remain on the server and should never be exposed through frontend source code.
+
+12. User Acceptance Testing
+A small group of users can test the complete workflow:
+
+Register
+   ↓
+Create Fitness Profile
+   ↓
+Generate Plan
+   ↓
+Review Workout
+   ↓
+Perform Workout
+   ↓
+Mark Complete
+   ↓
+Check Progress
+
+Collect feedback about:
+
+Ease of use
+
+Quality of generated plans
+
+Relevance of exercises
+
+UI clarity
+
+Response speed
+
+Overall usability
+
+13. Sample Test Case
+Test Case: Generate Personalized Workout
+Test ID: TC-001
+
+Input:
+
+Goal: Muscle Gain
+Experience: Beginner
+Days: 4
+Duration: 45 minutes
+Equipment: Dumbbells
+
+Steps:
+
+Login.
+
+Open Fitness Assessment.
+
+Enter the above information.
+
+Click Generate Plan.
+
+Wait for Gemini response.
+
+Display generated workout.
+
+Expected Result:
+
+A valid 4-day workout plan is generated containing exercises, sets, repetitions, rest periods, and workout durations compatible with the submitted requirements.
+
+Status: Pass/Fail
+
+14. Defect Management
+When a problem is discovered:
+
+Bug Found
+   ↓
+Record Bug
+   ↓
+Identify Cause
+   ↓
+Fix
+   ↓
+Retest
+   ↓
+Regression Testing
+   ↓
+Close Bug
+
+Example:
+
+Bug	Severity	Status
+Login validation failure	Medium	Fixed
+Invalid Gemini JSON	High	Fixed
+Incorrect progress count	Medium	Fixed
+Mobile layout issue	Low	Fixed
+
+15. Final Testing Checklist
+Before deployment, verify:
+
+ Registration works
+
+ Login/logout works
+
+ Fitness profile saves correctly
+
+ Gemini API connection works
+
+ Workout JSON is validated
+
+ Plans are stored correctly
+
+ Exercises display correctly
+
+ Exercise replacement works
+
+ Workout completion works
+
+ Progress calculations are correct
+
+ Invalid input is handled
+
+ Gemini failures are handled
+
+ User data is protected
+
+ API key is secure
+
+ Mobile UI works
+
+ Safety handling works
+
+ Major bugs are resolved
+
+Testing Outcome
+The testing phase should establish that the complete FitBuddy-AI workflow is reliable:
+
+User → Fitness Assessment → Gemini → Personalized Plan → Workout → Tracking → Progress
+
+Once these tests pass, the project can move to the deployment and maintenance phase.
+
+
