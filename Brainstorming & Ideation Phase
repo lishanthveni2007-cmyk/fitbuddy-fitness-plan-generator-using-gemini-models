@@ -1,0 +1,195 @@
+The brainstorming and ideation phase is where we define the problem, understand users, explore possible solutions, and decide what FitBuddy-AI should become before starting development.
+
+1. Problem Identification
+Many people want to exercise but struggle with:
+
+Not knowing which exercises to perform
+
+Following generic workout plans that don't match their goals
+
+Lack of access to personal trainers
+
+Difficulty adapting workouts to available equipment
+
+Losing motivation after a few weeks
+
+Not knowing how to progressively increase workout difficulty
+
+Difficulty maintaining a consistent schedule
+
+Problem statement:
+
+Users need an affordable and personalized fitness planning system that can generate workouts according to their individual goals, fitness level, schedule, and available equipment.
+
+2. Proposed Solution
+FitBuddy-AI is an AI-powered fitness plan generator that uses Gemini models to create personalized workout plans.
+
+The system asks users about their fitness profile and generates an appropriate plan.
+
+User Profile
+     ↓
+Fitness Goals
+     ↓
+Available Equipment
+     ↓
+Time & Schedule
+     ↓
+Gemini AI
+     ↓
+Personalized Workout Plan
+     ↓
+Track Progress
+     ↓
+Adapt Future Workouts
+
+3. Target Users
+Potential users include:
+
+Beginners starting their fitness journey
+
+Students with limited budgets
+
+Home-workout users
+
+Gym beginners
+
+People with limited workout time
+
+Users who want structured workout routines
+
+Users who want AI-assisted fitness guidance
+
+4. Brainstormed Features
+Core Features
+User registration and profile
+
+Fitness assessment
+
+Goal selection
+
+AI workout-plan generation
+
+Weekly workout schedule
+
+Exercise instructions
+
+Sets, reps and rest periods
+
+Workout completion tracking
+
+Progress dashboard
+
+AI Features
+Personalized workout generation
+
+Exercise substitution
+
+Workout adaptation
+
+AI fitness assistant
+
+Difficulty adjustment
+
+Weekly progress analysis
+
+For example:
+
+User: "I don't have dumbbells today."
+
+FitBuddy-AI: Generates equipment-free alternatives while keeping the workout's intended movement pattern and approximate difficulty.
+
+5. Unique Selling Idea
+Instead of being just a workout library, FitBuddy-AI can focus on being an adaptive AI fitness companion.
+
+Traditional Fitness App
+        ↓
+Predefined Workout
+        ↓
+Same Plan
+
+FitBuddy-AI
+        ↓
+User Data
+        ↓
+Gemini
+        ↓
+Personalized Plan
+        ↓
+User Feedback
+        ↓
+Adapted Plan
+
+6. Gemini's Role
+Gemini can be used for:
+
+Understanding natural-language fitness goals
+
+Generating structured workout plans
+
+Explaining exercises
+
+Suggesting alternatives
+
+Adapting workouts based on user feedback
+
+Generating progress summaries
+
+Conversational fitness assistance
+
+The application should keep important deterministic functions—such as workout history, completion percentages, streaks, and stored user data—in the application/database rather than relying on the model.
+
+7. Possible User Journey
+Sign Up
+   ↓
+Complete Fitness Assessment
+   ↓
+Select Goal
+   ↓
+Generate Plan
+   ↓
+Review Plan
+   ↓
+Start Workout
+   ↓
+Complete Exercises
+   ↓
+Record Progress
+   ↓
+Receive AI Feedback
+   ↓
+Adapt Next Workout
+
+8. MVP Idea
+For the first version, avoid trying to build everything.
+
+MVP
+Login/register
+
+Fitness profile
+
+Goal selection
+
+Gemini-powered workout generation
+
+Weekly workout display
+
+Exercise details
+
+Workout completion
+
+Basic progress tracking
+
+Then later add the AI chatbot, adaptive plans, nutrition features, and other advanced functionality.
+
+9. Expected Outcome
+The final system should allow a user to go from:
+
+"I want to get fit, but I don't know where to start."
+
+to:
+
+"FitBuddy-AI has created a workout plan that fits my goal, experience, equipment, and schedule."
+
+This gives you a clear foundation for the next phases: requirements analysis → UI/UX design → system architecture → Gemini integration → development → testing.
+
+
