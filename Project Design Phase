@@ -1,0 +1,405 @@
+1. System Architecture
+FitBuddy-AI can follow a three-layer architecture:
+
+┌─────────────────────────────────────┐
+│          PRESENTATION LAYER         │
+│        React / Next.js UI           │
+│                                     │
+│ Login │ Profile │ Workout │ Progress│
+└──────────────────┬──────────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────┐
+│          APPLICATION LAYER          │
+│           Node.js Backend           │
+│                                     │
+│ Auth │ Plan Generator │ Tracking    │
+│ Validation │ AI Assistant           │
+└──────────────┬───────────┬──────────┘
+               │           │
+               ▼           ▼
+       ┌────────────┐  ┌─────────────┐
+       │  Database  │  │ Gemini API   │
+       │            │  │             │
+       │ Users      │  │ Plan        │
+       │ Workouts   │  │ Generation  │
+       │ Progress   │  │ Adaptation  │
+       └────────────┘  └─────────────┘
+
+2. Main System Modules
+1. Authentication Module
+Responsible for:
+
+Registration
+
+Login
+
+Logout
+
+User authentication
+
+Profile management
+
+2. Fitness Assessment Module
+Collects:
+
+Age
+
+Height/weight
+
+Fitness level
+
+Fitness goal
+
+Available equipment
+
+Workout days
+
+Workout duration
+
+Preferences
+
+3. AI Plan Generator
+This is the core module.
+
+User Profile
+     ↓
+Validate Input
+     ↓
+Build Gemini Prompt
+     ↓
+Gemini API
+     ↓
+Structured JSON
+     ↓
+Validate Response
+     ↓
+Save Workout Plan
+
+4. Workout Module
+Displays:
+
+Today's workout
+
+Exercise list
+
+Sets
+
+Repetitions
+
+Rest time
+
+Exercise instructions
+
+Warm-up/cooldown
+
+5. Progress Module
+Tracks:
+
+Completed workouts
+
+Workout frequency
+
+Workout history
+
+Progress metrics
+
+Weekly activity
+
+6. AI Assistant Module
+Allows users to interact naturally with FitBuddy-AI.
+
+Example:
+
+User:
+"I don't have a bench today."
+
+             ↓
+
+        Gemini AI
+
+             ↓
+
+"Try these alternative exercises..."
+
+3. Database Design
+A relational database could use the following tables.
+
+Users
+Users
+-------------------------
+id (PK)
+name
+email
+password_hash
+created_at
+
+Fitness Profiles
+FitnessProfiles
+-------------------------
+id (PK)
+user_id (FK)
+age
+height
+weight
+fitness_level
+goal
+equipment
+days_per_week
+session_duration
+preferences
+
+Workout Plans
+WorkoutPlans
+-------------------------
+id (PK)
+user_id (FK)
+plan_name
+duration_weeks
+created_at
+status
+
+Workouts
+Workouts
+-------------------------
+id (PK)
+plan_id (FK)
+day
+focus
+duration_minutes
+
+Exercises
+Exercises
+-------------------------
+id (PK)
+workout_id (FK)
+name
+sets
+reps
+rest_seconds
+instructions
+
+Workout History
+WorkoutHistory
+-------------------------
+id (PK)
+user_id (FK)
+workout_id (FK)
+completed_at
+duration
+status
+
+4. Gemini Integration Design
+The backend should communicate with Gemini rather than exposing the API key in the frontend.
+
+React
+  │
+  │ POST /api/generate-plan
+  ▼
+Backend
+  │
+  ├── Validate user input
+  │
+  ├── Construct prompt
+  │
+  ▼
+Gemini
+  │
+  ▼
+Structured JSON
+  │
+  ├── Validate schema
+  │
+  ├── Store in database
+  │
+  ▼
+Frontend
+
+Google's Gemini API supports structured output with JSON schemas, which fits this architecture well because the frontend can consume predictable workout objects instead of parsing arbitrary model-generated text.
+
+5. UI Design
+Screen 1 — Login
+┌─────────────────────────┐
+│       FitBuddy-AI       │
+│                         │
+│ Email                   │
+│ [____________________]  │
+│                         │
+│ Password                │
+│ [____________________]  │
+│                         │
+│       [ LOGIN ]         │
+│                         │
+│ Create Account          │
+└─────────────────────────┘
+
+Screen 2 — Fitness Assessment
+┌─────────────────────────────┐
+│       Your Fitness Profile  │
+│                             │
+│ Fitness Goal                │
+│ [ Muscle Gain ▼ ]           │
+│                             │
+│ Experience                  │
+│ [ Beginner ▼ ]              │
+│                             │
+│ Days per Week               │
+│ [ 4 ]                       │
+│                             │
+│ Workout Duration            │
+│ [ 45 minutes ▼ ]            │
+│                             │
+│ Equipment                   │
+│ ☑ Dumbbells                 │
+│ ☑ Resistance Bands          │
+│                             │
+│    [ Generate My Plan ]     │
+└─────────────────────────────┘
+
+Screen 3 — Dashboard
+┌──────────────────────────────┐
+│ Good morning! 👋             │
+│                              │
+│ Today's Workout              │
+│ ───────────────────────────  │
+│ Full Body                    │
+│ 45 minutes                   │
+│                              │
+│ 6 Exercises                  │
+│                              │
+│       [ START WORKOUT ]      │
+│                              │
+│ This Week                    │
+│ ███████░░  4/5 workouts      │
+└──────────────────────────────┘
+
+Screen 4 — Workout
+┌──────────────────────────────┐
+│ Chest & Triceps              │
+│                              │
+│ Dumbbell Press               │
+│ 3 sets × 8-12 reps           │
+│ Rest: 90 sec                 │
+│                              │
+│ [ Exercise Instructions ]    │
+│                              │
+│ [ ✓ COMPLETE ]               │
+│                              │
+│ Need an alternative?         │
+│ [ Replace Exercise ]         │
+└──────────────────────────────┘
+
+6. Data Flow
+The main data flow is:
+
+User
+ ↓
+Fitness Assessment
+ ↓
+Frontend
+ ↓
+Backend API
+ ↓
+Input Validation
+ ↓
+Gemini Prompt
+ ↓
+Gemini Model
+ ↓
+Structured Workout JSON
+ ↓
+Response Validation
+ ↓
+Database
+ ↓
+Dashboard
+ ↓
+User
+
+7. API Design
+Possible backend endpoints:
+
+POST   /api/auth/register
+POST   /api/auth/login
+
+GET    /api/profile
+PUT    /api/profile
+
+POST   /api/plans/generate
+GET    /api/plans
+GET    /api/plans/:id
+
+POST   /api/workouts/:id/start
+POST   /api/workouts/:id/complete
+
+POST   /api/exercises/:id/replace
+
+GET    /api/progress
+
+8. Technology Design
+Frontend
+   │
+   └── React / Next.js
+          │
+          ▼
+Backend
+   │
+   └── Node.js
+          │
+     ┌────┴────┐
+     ▼         ▼
+ Gemini      Database
+ API         PostgreSQL/
+             Supabase
+
+For Gemini integration, Google's current JavaScript SDK is @google/genai.
+
+9. Security Design
+The design should include:
+
+Server-side Gemini API key storage
+
+Password hashing
+
+Authentication tokens/session management
+
+Input validation
+
+Authorization checks
+
+Database access controls
+
+Protection of personal information
+
+Validation of Gemini responses before storing/displaying them
+
+The Gemini API key should never be embedded directly in frontend JavaScript.
+
+10. Overall Design
+The final project can be represented as:
+
+                    FITBUDDY-AI
+                         │
+          ┌──────────────┼──────────────┐
+          │              │              │
+       PROFILE        WORKOUT        PROGRESS
+          │              │              │
+          └──────────────┼──────────────┘
+                         │
+                    BACKEND API
+                         │
+              ┌──────────┴──────────┐
+              │                     │
+          DATABASE               GEMINI
+              │                     │
+              │              AI Plan Generation
+              │              AI Adaptation
+              │              AI Assistant
+              │
+              └──────────┬──────────┘
+                         │
+                    USER DASHBOARD
+
+This design gives FitBuddy-AI a clear separation between UI, application logic, persistent data, and AI functionality, making the system easier to develop, test, and extend.
+
+
