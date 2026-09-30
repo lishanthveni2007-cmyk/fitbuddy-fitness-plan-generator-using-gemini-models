@@ -1,0 +1,350 @@
+1. Project Overview
+Project Name: FitBuddy-AI
+Type: AI-powered fitness plan generator
+AI Technology: Google Gemini models
+Primary Goal: Generate personalized workout plans based on individual user requirements.
+
+Problem
+Users often receive generic workout routines that don't consider their fitness goals, experience, available equipment, schedule, or preferred workout duration.
+
+Proposed Solution
+FitBuddy-AI collects user information and uses Gemini to generate a structured, personalized workout plan that can be displayed and tracked through the application.
+
+2. Stakeholders
+Stakeholder	Role
+User	Provides fitness information and follows the generated plan
+Administrator	Manages users and application data
+Developer	Develops and maintains the system
+Gemini API	Generates personalized fitness content
+Database	Stores user profiles, plans, and progress
+
+3. Functional Requirements
+FR1 — User Registration
+The system shall allow users to:
+
+Create an account
+
+Log in and log out
+
+Manage their profile
+
+FR2 — Fitness Assessment
+The system shall collect relevant information such as:
+
+Age
+
+Height and weight
+
+Fitness experience
+
+Fitness goal
+
+Available equipment
+
+Number of workout days
+
+Preferred workout duration
+
+Workout preferences
+
+FR3 — Goal Selection
+Users should be able to select goals such as:
+
+Weight management
+
+Muscle development
+
+Strength development
+
+General fitness
+
+Endurance
+
+FR4 — AI Workout Generation
+The system shall send the user's profile and requirements to Gemini and generate a personalized workout plan.
+
+The generated plan should contain:
+
+Workout days
+
+Target muscle groups/focus
+
+Exercises
+
+Sets
+
+Repetitions
+
+Rest periods
+
+Estimated workout duration
+
+Warm-up
+
+Cooldown
+
+Progression guidance
+
+FR5 — Workout Display
+The generated plan shall be presented through an easy-to-understand dashboard.
+
+Example:
+
+Monday
+────────────────────
+Chest + Triceps
+
+Push-ups
+3 × 10-15
+Rest: 60 sec
+
+Dumbbell Press
+3 × 8-12
+Rest: 90 sec
+
+[Start Workout]
+
+FR6 — Exercise Substitution
+Users should be able to request an alternative when they cannot perform an exercise.
+
+Example:
+
+Dumbbell Squat
+      ↓
+"Replace this exercise"
+      ↓
+Alternative exercise
+
+FR7 — Workout Tracking
+The system shall allow users to:
+
+Start a workout
+
+Mark exercises as completed
+
+Record sets/repetitions where appropriate
+
+Mark the overall workout as completed
+
+FR8 — Progress Tracking
+The application shall maintain information such as:
+
+Completed workouts
+
+Weekly activity
+
+Workout history
+
+Personal progress metrics
+
+FR9 — AI Adaptation
+Based on appropriate user feedback, FitBuddy-AI should be able to generate an adjusted workout.
+
+Example:
+
+"Today's workout needs to be 25 minutes."
+
+The system can generate a shorter version while maintaining the overall training objective.
+
+FR10 — AI Fitness Assistant
+Users should eventually be able to ask natural-language questions such as:
+
+"What can I do instead of lunges?"
+
+"I only have resistance bands today."
+
+The Gemini-powered assistant can provide relevant alternatives and explanations.
+
+4. Non-Functional Requirements
+Performance
+Workout plans should be generated within a reasonable response time.
+
+The UI should remain responsive while Gemini is processing.
+
+Usability
+Simple onboarding
+
+Mobile-friendly interface
+
+Clear exercise instructions
+
+Easy-to-read workout cards
+
+Minimal steps to start a workout
+
+Security
+Protect user accounts and authentication information.
+
+Store API credentials securely on the server.
+
+Do not expose the Gemini API key in client-side code.
+
+Protect personal user data.
+
+Reliability
+Handle Gemini API failures gracefully.
+
+Validate generated JSON before displaying it.
+
+Provide a fallback message when a plan cannot be generated.
+
+Scalability
+The architecture should allow additional users and AI features without requiring a complete redesign.
+
+Maintainability
+Use modular components for:
+
+Authentication
+
+User profiles
+
+Gemini integration
+
+Workout generation
+
+Workout tracking
+
+Progress tracking
+
+5. AI Requirements
+Gemini should generate structured output rather than unrestricted text.
+
+For example:
+
+{
+  "planName": "Beginner Fitness Plan",
+  "durationWeeks": 4,
+  "workouts": [
+    {
+      "day": "Monday",
+      "focus": "Full Body",
+      "exercises": [
+        {
+          "name": "Bodyweight Squat",
+          "sets": 3,
+          "reps": "10-15",
+          "restSeconds": 60
+        }
+      ]
+    }
+  ]
+}
+
+Gemini's structured-output functionality can be used to make generated responses conform to a predefined schema.
+
+The application should validate the generated data before presenting it to the user.
+
+6. Safety Requirements
+Because FitBuddy-AI deals with fitness, safety needs to be part of the requirements.
+
+The system should:
+
+Avoid presenting itself as a medical professional.
+
+Avoid diagnosing injuries or medical conditions.
+
+Encourage users to seek qualified professional advice for relevant medical or injury concerns.
+
+Include appropriate exercise-safety guidance.
+
+Allow users to report an exercise as unsuitable.
+
+Avoid making unsupported medical claims.
+
+7. Data Requirements
+User data
+User
+ ├── User ID
+ ├── Name
+ ├── Age
+ ├── Height
+ ├── Weight
+ ├── Fitness Level
+ ├── Goal
+ ├── Equipment
+ └── Preferences
+
+Workout data
+Workout
+ ├── Workout ID
+ ├── User ID
+ ├── Date
+ ├── Focus
+ ├── Exercises
+ ├── Sets
+ ├── Repetitions
+ ├── Rest
+ └── Completion Status
+
+Progress data
+Progress
+ ├── User ID
+ ├── Workout Date
+ ├── Completed Exercises
+ ├── Duration
+ └── Progress Metrics
+
+8. Use Cases
+                 ┌─────────────────┐
+                 │      User       │
+                 └────────┬────────┘
+                          │
+       ┌──────────────────┼──────────────────┐
+       ↓                  ↓                  ↓
+  Create Account    Enter Fitness       View Plan
+                       Profile
+                          │
+                          ↓
+                   Generate Plan
+                          │
+                          ↓
+                     Gemini AI
+                          │
+                          ↓
+                   Track Workout
+                          │
+                          ↓
+                   View Progress
+
+Primary use cases
+Register/Login
+
+Complete fitness assessment
+
+Select fitness goal
+
+Generate workout plan
+
+View workout
+
+Start workout
+
+Complete workout
+
+Track progress
+
+Replace an exercise
+
+Regenerate/adapt a workout
+
+Chat with AI assistant
+
+9. MVP Requirements
+For the first working version, prioritize:
+
+Priority	Requirement
+High	User authentication
+High	Fitness profile
+High	Goal selection
+High	Gemini workout generation
+High	Structured workout display
+High	Workout completion
+Medium	Progress dashboard
+Medium	Exercise substitution
+Medium	Plan regeneration
+Low	AI fitness chatbot
+Low	Advanced analytics
+
+This keeps the initial project manageable while demonstrating the central idea: Gemini-powered personalized fitness-plan generation.
+
+
