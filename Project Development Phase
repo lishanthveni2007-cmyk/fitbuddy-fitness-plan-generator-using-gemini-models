@@ -1,0 +1,338 @@
+Build the FitBuddy-AI user interface.
+
+Implement user authentication.
+
+Create the fitness assessment form.
+
+Connect the application to a database.
+
+Integrate Gemini models.
+
+Generate personalized workout plans.
+
+Display workouts in a user-friendly format.
+
+Track completed workouts and progress.
+
+Implement error handling and basic safety controls.
+
+2. Development Architecture
+                 FITBUDDY-AI
+                     │
+              ┌──────┴──────┐
+              │             │
+          Frontend       Backend
+              │             │
+              │       ┌─────┴─────┐
+              │       │           │
+              │    Database    Gemini API
+              │       │           │
+              └───────┴───────────┘
+                      │
+                Personalized
+                 Workout Plan
+3. Frontend Development
+The frontend provides the interface through which users interact with FitBuddy-AI.
+
+Main screens
+Login/Register
+Users can create an account and securely access their profile.
+
+Fitness Assessment
+The user enters:
+
+Age
+
+Height
+
+Weight
+
+Fitness level
+
+Fitness goal
+
+Available equipment
+
+Training days
+
+Session duration
+
+Dashboard
+The dashboard displays:
+
+Today's workout
+
+Weekly schedule
+
+Completed workouts
+
+Progress information
+
+AI recommendations
+
+Workout Page
+Displays:
+
+Today's Workout
+
+Full Body
+45 Minutes
+
+1. Squats
+   3 × 12
+   Rest: 60 sec
+
+2. Push-ups
+   3 × 10
+   Rest: 60 sec
+
+3. Dumbbell Row
+   3 × 10
+   Rest: 90 sec
+
+[ Complete Workout ]
+4. Backend Development
+The backend manages application logic and communication between the frontend, database, and Gemini.
+
+Example API structure
+POST /api/auth/register
+POST /api/auth/login
+
+GET  /api/profile
+PUT  /api/profile
+
+POST /api/plans/generate
+GET  /api/plans
+
+GET  /api/workouts/today
+POST /api/workouts/:id/complete
+
+POST /api/exercises/:id/replace
+
+GET  /api/progress
+The backend should validate requests before sending information to Gemini.
+
+5. Database Development
+The database stores user and application information.
+
+Users
+Users
+├── id
+├── name
+├── email
+└── created_at
+Fitness Profiles
+FitnessProfiles
+├── id
+├── user_id
+├── age
+├── height
+├── weight
+├── fitness_level
+├── goal
+├── equipment
+├── days_per_week
+└── session_duration
+Workout Plans
+WorkoutPlans
+├── id
+├── user_id
+├── plan_name
+├── duration_weeks
+└── created_at
+Workouts
+Workouts
+├── id
+├── plan_id
+├── day
+├── focus
+└── duration
+Exercises
+Exercises
+├── id
+├── workout_id
+├── name
+├── sets
+├── reps
+├── rest_seconds
+└── instructions
+Workout History
+WorkoutHistory
+├── id
+├── user_id
+├── workout_id
+├── completed_at
+└── status
+6. Gemini Integration
+This is the main development component.
+
+The application sends the user's fitness profile to Gemini.
+
+User Input
+    ↓
+Backend
+    ↓
+Prompt Builder
+    ↓
+Gemini Model
+    ↓
+Structured JSON
+    ↓
+Validation
+    ↓
+Database
+    ↓
+Frontend
+The Gemini API can return structured JSON according to a predefined schema, which makes the generated workout data easier for the application to process.
+
+A suitable Gemini integration can use Google's @google/genai JavaScript/TypeScript SDK.
+
+7. Workout Generation Process
+For example, a user provides:
+
+Goal: Muscle Gain
+Level: Beginner
+Days: 4
+Duration: 45 minutes
+Equipment: Dumbbells
+The backend creates a prompt and sends it to Gemini.
+
+Gemini generates:
+
+Monday → Chest + Triceps
+Tuesday → Back + Biceps
+Thursday → Legs
+Saturday → Shoulders + Core
+Each workout contains exercises, sets, repetitions, rest periods, and other required information.
+
+The backend validates the response and stores the plan.
+
+8. Exercise Replacement
+The user can request an alternative:
+
+Dumbbell Bench Press
+        ↓
+   [Replace]
+        ↓
+Gemini
+        ↓
+Alternative Exercise
+The replacement should respect the user's available equipment and the intended training focus.
+
+9. Workout Tracking
+After completing an exercise, the user can mark it as completed.
+
+Exercise
+   ↓
+[✓ Complete]
+   ↓
+Workout Progress
+   ↓
+Workout History
+The application can then calculate:
+
+Completed workouts
+
+Weekly activity
+
+Workout history
+
+Completion percentage
+
+Training consistency
+
+10. Progress Dashboard
+A simple dashboard could display:
+
+        YOUR PROGRESS
+
+This Week
+████████░░  4 / 5 Workouts
+
+Completed
+        18
+
+Current Streak
+        6 Days
+
+Weekly Activity
+Mon  ✓
+Tue  ✓
+Wed  -
+Thu  ✓
+Fri  -
+Sat  ✓
+Sun  -
+11. Error Handling
+The application should handle situations such as:
+
+Gemini API unavailable
+
+Invalid user input
+
+Invalid AI-generated JSON
+
+Database connection failure
+
+Authentication failure
+
+Network timeout
+
+Example:
+
+Gemini Request
+     ↓
+Response?
+ ┌───┴────┐
+Yes       No
+ ↓         ↓
+Validate   Error Handler
+ ↓         ↓
+Save       Retry/Fallback
+The application should never assume that an AI response is automatically valid.
+
+12. Security During Development
+Important practices include:
+
+Store Gemini credentials in environment variables.
+
+Never expose API keys in frontend code.
+
+Validate all user input.
+
+Authenticate API requests.
+
+Restrict users to their own data.
+
+Secure database access.
+
+Avoid storing unnecessary sensitive information.
+
+13. Development Sequence
+Step 1 → Create project
+          ↓
+Step 2 → Build database
+          ↓
+Step 3 → Implement authentication
+          ↓
+Step 4 → Build fitness assessment
+          ↓
+Step 5 → Build dashboard
+          ↓
+Step 6 → Integrate Gemini
+          ↓
+Step 7 → Generate workout plans
+          ↓
+Step 8 → Add workout tracking
+          ↓
+Step 9 → Add progress dashboard
+          ↓
+Step 10 → Testing & debugging
+14. Development Outcome
+At the end of this phase, the project should have a functional FitBuddy-AI MVP in which a user can:
+
+Register → Enter fitness details → Generate a Gemini-powered plan → View workouts → Complete workouts → Track progress.
+
+The next phase after development is the testing phase, where the application, database, APIs, Gemini responses, UI, security, and overall fitness-plan workflow are systematically tested.
+
+
