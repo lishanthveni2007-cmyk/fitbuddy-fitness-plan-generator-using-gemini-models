@@ -1,63 +1,148 @@
-import { GoogleGenAI } from "@google/genai";
+"use client";
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-});
+import { useState } from "react";
 
-export async function POST(request) {
-  try {
-    const profile = await request.json();
+const GOALS = ["build muscle", "lose fat", "improve endurance", "general fitness"];
+const LEVELS = ["beginner", "intermediate", "advanced"];
+const EQUIPMENT = ["bodyweight", "dumbbells", "home gym", "full gym"];
 
-    if (!profile.goal || !profile.experience || !profile.days) {
-      return Response.json(
-        { error: "Please provide all required fitness information." },
-        { status: 400 }
-      );
+export default function Home() {
+  const [form, setForm] = useState({
+    goal: GOALS[0],
+    experience: LEVELS[0],
+    days: 3,
+    duration: 45,
+    equipment: EQUIPMENT[1],
+  });
+  const [plan, setPlan] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const set = (key) => (e) => setForm({ ...form, [key]: e.target.value });
+
+  async function generate(e) {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setPlan(null);
+    try {
+      const res = await fetch("/api/plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          days: Number(form.days),
+          duration: Number(form.duration),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Something went wrong.");
+      setPlan(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-
-    const prompt = `
-You are FitBuddy-AI, an AI fitness planning assistant.
-
-Create a personalized workout plan using this profile:
-
-Goal: ${profile.goal}
-Fitness Level: ${profile.experience}
-Days per Week: ${profile.days}
-Workout Duration: ${profile.duration} minutes
-Equipment: ${profile.equipment}
-
-Requirements:
-- Create a practical weekly workout plan.
-- Respect the available equipment.
-- Match the user's experience level.
-- Keep workouts within the requested duration.
-- Include exercises, sets, reps and rest periods.
-- Include warm-up and cooldown.
-- Include progression guidance.
-- Return ONLY valid JSON.
-- Do not diagnose medical conditions.
-- Include a safety note advising users to stop if an exercise causes pain.
-`;
-
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-      },
-    });
-
-    const plan = JSON.parse(response.text);
-
-    return Response.json(plan);
-  } catch (error) {
-    console.error(error);
-
-    return Response.json(
-      {
-        error: "Unable to generate the fitness plan. Please try again.",
-      },
-      { status: 500 }
-    );
   }
+
+  return (
+    <main className="wrap">
+      <style>{css}</style>
+
+      <h1>FitBuddy-AI</h1>
+      <p className="lead">Tell us how you train. Get a weekly plan built for it.</p>
+
+      <form onSubmit={generate} className="form">
+        <label>
+          Goal
+          <select value={form.goal} onChange={set("goal")}>
+            {GOALS.map((g) => <option key={g}>{g}</option>)}
+          </select>
+        </label>
+        <label>
+          Fitness level
+          <select value={form.experience} onChange={set("experience")}>
+            {LEVELS.map((g) => <option key={g}>{g}</option>)}
+          </select>
+        </label>
+        <label>
+          Days per week
+          <input type="number" min="1" max="7" value={form.days} onChange={set("days")} />
+        </label>
+        <label>
+          Minutes per workout
+          <input type="number" min="15" max="120" step="5" value={form.duration} onChange={set("duration")} />
+        </label>
+        <label>
+          Equipment
+          <select value={form.equipment} onChange={set("equipment")}>
+            {EQUIPMENT.map((g) => <option key={g}>{g}</option>)}
+          </select>
+        </label>
+        <button disabled={loading}>{loading ? "Building your plan…" : "Build my plan"}</button>
+      </form>
+
+      {error && <p role="alert" className="error">{error}</p>}
+
+      {plan && (
+        <section className="plan">
+          <h2>{plan.title}</h2>
+          <p>{plan.summary}</p>
+
+          <h3>Warm-up</h3>
+          <ul>{plan.warmup.map((w, i) => <li key={i}>{w}</li>)}</ul>
+
+          {plan.weeklyPlan.map((d, i) => (
+            <div className="day" key={i}>
+              <h3>{d.day}: {d.focus}</h3>
+              <table>
+                <thead>
+                  <tr><th>Exercise</th><th>Sets</th><th>Reps</th><th>Rest</th></tr>
+                </thead>
+                <tbody>
+                  {d.exercises.map((x, j) => (
+                    <tr key={j}>
+                      <td>{x.name}{x.notes && <small>{x.notes}</small>}</td>
+                      <td>{x.sets}</td>
+                      <td>{x.reps}</td>
+                      <td>{x.restSeconds}s</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ))}
+
+          <h3>Cooldown</h3>
+          <ul>{plan.cooldown.map((w, i) => <li key={i}>{w}</li>)}</ul>
+
+          <h3>Progression</h3>
+          <ul>{plan.progression.map((w, i) => <li key={i}>{w}</li>)}</ul>
+
+          <p className="safety">{plan.safetyNote}</p>
+        </section>
+      )}
+    </main>
+  );
 }
+
+const css = `
+  :root { --ink:#17211b; --paper:#f7f8f5; --line:#d5dbd2; --accent:#1f6f5c; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:system-ui,sans-serif; }
+  .wrap { max-width:720px; margin:0 auto; padding:2.5rem 1.25rem 4rem; }
+  h1 { font-size:2.2rem; margin:0; }
+  .lead { margin:.25rem 0 2rem; color:#4b5a50; }
+  .form { display:grid; gap:1rem; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); }
+  label { display:grid; gap:.3rem; font-size:.9rem; }
+  select,input { padding:.55rem; border:1px solid var(--line); border-radius:6px; font:inherit; background:#fff; }
+  button { grid-column:1/-1; padding:.8rem; border:0; border-radius:6px; background:var(--accent); color:#fff; font:inherit; font-weight:600; cursor:pointer; }
+  button:disabled { opacity:.6; cursor:wait; }
+  :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .error { margin-top:1rem; color:#a32020; }
+  .plan { margin-top:2.5rem; }
+  .day { margin:1.5rem 0; }
+  table { width:100%; border-collapse:collapse; }
+  th,td { text-align:left; padding:.5rem .4rem; border-bottom:1px solid var(--line); vertical-align:top; }
+  small { display:block; color:#5d6b61; }
+  .safety { margin-top:2rem; padding:.9rem; border-left:4px solid var(--accent); background:#e9f0ec; }
+`;
